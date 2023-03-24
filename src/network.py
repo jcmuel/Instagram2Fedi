@@ -8,10 +8,11 @@ from converters import split_array, try_to_get_carousel
 import hashlib
 from instaloader import Profile, Instaloader, LatestStamps
 
+
 def get_instagram_user(user, fetched_user):
     L = Instaloader()
 
-    print(Fore.GREEN + 'TEST 🚀 > Connecting to Instagram...')
+    print(Fore.GREEN + "TEST 🚀 > Connecting to Instagram...")
     print(Style.RESET_ALL)
     print(datetime.datetime.now())
 
@@ -19,6 +20,7 @@ def get_instagram_user(user, fetched_user):
         print("USER USER USER!!!!!!!!!!!!!", user["name"])
         L.login(user["name"], user["password"])
     return Profile.from_username(L.context, fetched_user)
+
 
 def get_image(url):
     try:
@@ -46,7 +48,9 @@ def upload_image_to_mastodon(url, mastodon):
         print(Fore.YELLOW + "🐘 > Uploading Image...")
         print(Style.RESET_ALL)
         print(datetime.datetime.now())
-        media = mastodon.media_post(media_file = get_image(url), mime_type = "image/jpeg") # sending image to mastodon
+        media = mastodon.media_post(
+            media_file=get_image(url), mime_type="image/jpeg"
+        )  # sending image to mastodon
         print(Fore.GREEN + "✨ > Uploaded!")
         print(Style.RESET_ALL)
         print(datetime.datetime.now())
@@ -56,7 +60,8 @@ def upload_image_to_mastodon(url, mastodon):
         print(Style.RESET_ALL)
         print(datetime.datetime.now())
 
-def toot(urls, title, mastodon, fetched_user ):
+
+def toot(urls, title, mastodon, fetched_user):
     try:
         print(Fore.YELLOW + "🐘 > Creating Toot...", title)
         print(Style.RESET_ALL)
@@ -64,18 +69,31 @@ def toot(urls, title, mastodon, fetched_user ):
         ids = []
         for url in urls:
             ids.append(upload_image_to_mastodon(url, mastodon))
-        post_text = str(title) + "\n"  # creating post text
+        post_text = str(title) + " #bot #crosspost" + "\n"  # creating post text
+        post_text = post_text.replace("@", "[at]")
         post_text = post_text[0:1000]
-        if(ids):
+
+        if ids:
             print(ids)
-            mastodon.status_post(post_text, media_ids = ids)
+            mastodon.status_post(post_text, media_ids=ids)
 
     except Exception as e:
         print(Fore.RED + "😿 > Failed to create toot \n", e)
         print(Style.RESET_ALL)
         print(datetime.datetime.now())
 
-def get_new_posts(mastodon,  mastodon_carousel_size, post_limit, already_posted_path, using_mastodon, carousel_size, post_interval, fetched_user, user):
+
+def get_new_posts(
+    mastodon,
+    mastodon_carousel_size,
+    post_limit,
+    already_posted_path,
+    using_mastodon,
+    carousel_size,
+    post_interval,
+    fetched_user,
+    user,
+):
     # fetching user profile to get new posts
     profile = get_instagram_user(user, fetched_user)
     # get list of all posts
@@ -90,7 +108,7 @@ def get_new_posts(mastodon,  mastodon_carousel_size, post_limit, already_posted_
                 print(Fore.YELLOW + "🐘 > Already Posted ", post.url)
                 print(Style.RESET_ALL)
                 print(datetime.datetime.now())
-                continue
+                break  # Do not need to go back further in time
             print("Posting... ", post.url)
             print(datetime.datetime.now())
             if using_mastodon:
@@ -106,5 +124,3 @@ def get_new_posts(mastodon,  mastodon_carousel_size, post_limit, already_posted_
     print(Fore.GREEN + "✨ > Fetched All")
     print(Style.RESET_ALL)
     print(datetime.datetime.now())
-
-

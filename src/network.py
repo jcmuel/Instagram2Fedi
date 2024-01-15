@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from colorama import Fore, Back, Style
-import requests
-import time
 import datetime
+import hashlib
+import time
+
+import requests
+from colorama import Back, Fore, Style
+from instaloader import Instaloader, LatestStamps, Profile
+
 from already_posted import already_posted, mark_as_posted
 from converters import split_array, try_to_get_carousel
-import hashlib
-from instaloader import Profile, Instaloader, LatestStamps
 
 
 def get_instagram_user(user, fetched_user):
@@ -17,7 +19,7 @@ def get_instagram_user(user, fetched_user):
     print(datetime.datetime.now())
 
     if user["name"] != None:
-        print("USER USER USER!!!!!!!!!!!!!", user["name"])
+        print("USER:", user["name"])
         L.login(user["name"], user["password"])
     return Profile.from_username(L.context, fetched_user)
 
@@ -37,7 +39,6 @@ def get_image(url):
 
         return response.content
     except Exception as e:
-
         print(Fore.RED + "💥 > Failed to download image. \n", e)
         print(Style.RESET_ALL)
         print(datetime.datetime.now())

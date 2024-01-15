@@ -1,21 +1,28 @@
 # -*- coding: utf-8 -*-
-from colorama import Fore, Back, Style
 import datetime
+
+from colorama import Back, Fore, Style
+
 
 def split_array(arr, size):
     count = len(arr) // size + 1
     new_arr = []
     for i in range(count):
-        new_arr.append(arr[i*size:(i+1)*size])
+        new_arr.append(arr[i * size : (i + 1) * size])
     return new_arr
 
 
 def try_to_get_carousel(array, post):
     try:
-        node = vars(post)['_node']
-        if 'edge_sidecar_to_children' in node:
+        node = vars(post)["_node"]
+        if "edge_sidecar_to_children" in node:
             try:
-                urls = list(map(lambda arr: arr['node']['display_url'], node['edge_sidecar_to_children']['edges']))
+                urls = list(
+                    map(
+                        lambda arr: arr["node"]["display_url"],
+                        node["edge_sidecar_to_children"]["edges"],
+                    )
+                )
                 print(Fore.GREEN + "🎠 > Found carousel!")
                 print(Style.RESET_ALL)
                 print(datetime.datetime.now())
@@ -26,12 +33,12 @@ def try_to_get_carousel(array, post):
                 print(datetime.datetime.now())
                 return array
         else:
-                print(Fore.YELLOW + "🎠💥 > No carousel\n")
+            print(Fore.YELLOW + "🎠💥 > No carousel\n")
 
         # We can also have video in a separate key
-        if 'is_video' in node and node ['is_video']:
+        if "is_video" in node and node["is_video"]:
             try:
-                urls = [node['video_url']]
+                urls = [node["video_url"]]
                 print(Fore.GREEN + "🎞 > Found video!")
                 print(Style.RESET_ALL)
                 print(datetime.datetime.now())

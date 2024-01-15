@@ -26,17 +26,17 @@ else:
     verbose_output = False
 
 if verbose_output:
-    print("instagram", instagram_user)
-    print("instagram", instance)
-    print(token)
-    print(check_interval)
-    print(post_interval)
-    print(use_mastodon)
-    print(fetch_count)
-    print(user_name)
-    print(user_password)
-    print(scheduled_run)
-    print(verbose_output)
+    print_log("instagram", instagram_user)
+    print_log("instagram", instance)
+    print_log(token)
+    print_log(check_interval)
+    print_log(post_interval)
+    print_log(use_mastodon)
+    print_log(fetch_count)
+    print_log(user_name)
+    print_log(user_password)
+    print_log(scheduled_run)
+    print_log(verbose_output)
 
 
 def flags(args, defaults):

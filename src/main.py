@@ -29,9 +29,7 @@ settings = process_arguments(sys.argv, default_settings)
 verbose = settings["verbose"]
 
 if verbose:
-    print("ARGUMENTS")
-    print(sys.argv)
-    print("SETTINGS", settings)
+    print_log("SETTINGS", settings)
 
 agree = [1, True, "true", "True", "yes", "Yes"]
 if os.environ.get("USE_DOCKER"):

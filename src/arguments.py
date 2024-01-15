@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import datetime
 import os
 
-from colorama import Back, Fore, Style
+from util import print_log
 
 instagram_user = os.environ.get("I2M_INSTAGRAM_USER")
 user_name = os.environ.get("I2M_USER_NAME")
@@ -76,9 +75,7 @@ def flags(args, defaults):
             count -= 1
 
         else:
-            print(Fore.RED + "❗ -> Wrong Argument Name!...")
-            print(Style.RESET_ALL)
-            print(datetime.datetime.now())
+            print_log("❗ -> Wrong Argument Name!...", color="red")
 
         count += 2
     return defaults
@@ -111,9 +108,6 @@ def process_arguments(args, defaults):
     )
     defaults["scheduled"] = bool(scheduled_run) if scheduled_run else False
     defaults["verbose"] = bool(verbose_output) if verbose_output else False
-    # print(Fore.RED + '❗ -> Missing Argument ')
-    # print(Style.RESET_ALL)
-    # print(datetime.datetime.now())
 
     # Command line arguments more prioritized, if smth has been written in .env and in cmd args, then Instagram2Fedi will take values from `cmd args`
     new_defaults = flags(args, defaults)

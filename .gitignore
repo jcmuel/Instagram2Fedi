@@ -6,5 +6,5 @@ src/__pycache__/
 .env.sh
 docker-compose.yml
 docker-compose.yaml
-
+*.sqlite
 manual.xsh

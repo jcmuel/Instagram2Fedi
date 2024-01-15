@@ -1,72 +1,68 @@
 # -*- coding: utf-8 -*-
-import datetime
-import hashlib
+
 import time
 
 import requests
-from colorama import Back, Fore, Style
-from instaloader import Instaloader, LatestStamps, Profile
+from instaloader import Instaloader, Profile
 
 from already_posted import already_posted, mark_as_posted
 from converters import split_array, try_to_get_carousel
+from util import print_log
 
 
 def get_instagram_user(user, fetched_user):
-    L = Instaloader()
+    loader = Instaloader()
 
-    print(Fore.GREEN + "🚀 > Connecting to Instagram...")
-    print(Style.RESET_ALL)
-    print(datetime.datetime.now())
+    print_log("🚀 > Connecting to Instagram...", color="green")
 
-    if user["name"] != None:
-        print("USER:", user["name"])
-        L.login(user["name"], user["password"])
-    return Profile.from_username(L.context, fetched_user)
+    if user["name"] is not None:
+        print_log("User " + user["name"])
+        session_file = user["name"] + "_session.sqlite"
+        try:
+            loader.load_session_from_file(user["name"], session_file)
+            assert user["name"] == loader.test_login()
+            print_log("Restored the session")
+        except FileNotFoundError:
+            print_log(
+                "Found no active session... authentication attempt", color="yellow"
+            )
+            loader.login(user["name"], user["password"])
+            print_log("Authentication successful", color="green")
+            loader.save_session_to_file(session_file)
+    return Profile.from_username(loader.context, fetched_user)
 
 
 def get_image(url):
     try:
-        print(Fore.YELLOW + "🚀 > Downloading Image...", url)
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+        print_log("🚀 > Downloading Image... " + url, color="yellow")
 
         response = requests.get(url)
         response.raw.decode_content = True
 
-        print(Fore.GREEN + "✨ > Downloaded!")
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+        print_log("✨ > Downloaded!", color="green")
 
         return response.content
-    except Exception as e:
-        print(Fore.RED + "💥 > Failed to download image. \n", e)
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+    except Exception as err:
+        print_log("💥 > Failed to download image.", color="red")
+        print_log(err)
 
 
 def upload_image_to_mastodon(url, mastodon):
     try:
-        print(Fore.YELLOW + "🐘 > Uploading Image...")
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+        print_log("🐘 > Uploading Image...", color="yellow")
         media = mastodon.media_post(
             media_file=get_image(url), mime_type="image/jpeg"
         )  # sending image to mastodon
-        print(Fore.GREEN + "✨ > Uploaded!")
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+        print_log("✨ > Uploaded!", color="green")
         return media["id"]
-    except Exception as e:
-        print(Fore.RED + "💥 > failed to upload image to mastodon. \n", e)
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+    except Exception as err:
+        print_log("💥 > failed to upload image to mastodon", color="red")
+        print_log(err)
 
 
-def toot(urls, title, mastodon, fetched_user):
+def toot(urls, title, mastodon):
     try:
-        print(Fore.YELLOW + "🐘 > Creating Toot...", title)
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+        print_log("🐘 > Creating Toot..." + title, color="yellow")
         ids = []
         for url in urls:
             ids.append(upload_image_to_mastodon(url, mastodon))
@@ -75,13 +71,12 @@ def toot(urls, title, mastodon, fetched_user):
         post_text = post_text[0:1000]
 
         if ids:
-            print(ids)
+            print_log("Post identifiers:" + str(ids))
             mastodon.status_post(post_text, media_ids=ids)
 
-    except Exception as e:
-        print(Fore.RED + "😿 > Failed to create toot \n", e)
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+    except Exception as err:
+        print_log("😿 > Failed to create toot", color="red")
+        print_log(err)
 
 
 def get_new_posts(
@@ -106,22 +101,17 @@ def get_new_posts(
         if stupidcounter < post_limit:
             stupidcounter += 1
             if already_posted(str(post.mediaid), already_posted_path):
-                print(Fore.YELLOW + "🐘 > Already Posted ", post.url)
-                print(Style.RESET_ALL)
-                print(datetime.datetime.now())
+                print_log("🐘 > Already Posted        "+ post.url, color="yellow")
                 break  # Do not need to go back further in time
-            print("Posting... ", post.url)
-            print(datetime.datetime.now())
+            print_log("Posting... " + post.url)
             if using_mastodon:
                 urls_arr = split_array(url_arr, carousel_size)
                 for urls in urls_arr:
-                    toot(urls, post.caption, mastodon, fetched_user)
+                    toot(urls, post.caption, mastodon)
             else:
-                toot(url_arr, post.caption, mastodon, fetched_user)
+                toot(url_arr, post.caption, mastodon)
             mark_as_posted(str(post.mediaid), already_posted_path)
             time.sleep(post_interval)
         else:
             break
-    print(Fore.GREEN + "✨ > Fetched All")
-    print(Style.RESET_ALL)
-    print(datetime.datetime.now())
+    print_log("✨ > Fetched All", color="green")

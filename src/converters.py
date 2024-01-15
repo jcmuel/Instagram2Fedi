@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import datetime
 
-from colorama import Back, Fore, Style
+from util import print_log
 
 
 def split_array(arr, size):
@@ -23,37 +22,30 @@ def try_to_get_carousel(array, post):
                         node["edge_sidecar_to_children"]["edges"],
                     )
                 )
-                print(Fore.GREEN + "🎠 > Found carousel!")
-                print(Style.RESET_ALL)
-                print(datetime.datetime.now())
+                print_log("🎠 > Found carousel!", color="green")
                 return urls
-            except Exception as e:
-                print(Fore.RED + "🎠💥 > No carousel :( \n", e)
-                print(Style.RESET_ALL)
-                print(datetime.datetime.now())
+            except Exception as err:
+                print_log("🎠💥 > No carousel ", color="red")
+                print_log(err)
                 return array
         else:
-            print(Fore.YELLOW + "🎠💥 > No carousel\n")
+            print_log("🎠💥 > No carousel", color="yellow")
 
         # We can also have video in a separate key
         if "is_video" in node and node["is_video"]:
             try:
                 urls = [node["video_url"]]
-                print(Fore.GREEN + "🎞 > Found video!")
-                print(Style.RESET_ALL)
-                print(datetime.datetime.now())
+                print_log("🎞 > Found video!", color="green")
                 return urls
-            except Exception as e:
-                print(Fore.RED + "🎞💥 > No video :( \n", e)
-                print(Style.RESET_ALL)
-                print(datetime.datetime.now())
+            except Exception as err:
+                print_log("🎞💥 > No video :(", color="red")
+                print_log(err)
                 return array
         else:
-            print(Fore.YELLOW + "🎠💥 > No video\n")
+            print_log("🎠💥 > No video", color="yellow")
 
-    except Exception as e:
-        print(Fore.RED + "😱💥 > No node :( \n", e)
-        print(Style.RESET_ALL)
-        print(datetime.datetime.now())
+    except Exception as err:
+        print_log("😱💥 > No node :(", color="red")
+        print_log(err)
         return array
     return array

@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import datetime
-import json
+
 import os
 import sys
 import time
 
-from colorama import Back, Fore, Style
-from instaloader import Instaloader, LatestStamps, Profile
 from mastodon import Mastodon
 
 from arguments import process_arguments
 from network import get_new_posts
+from util import print_log
 
 default_settings = {
     "instance": None,
@@ -62,10 +60,9 @@ scheduled = settings["scheduled"]
 
 user = {"name": settings["user-name"], "password": settings["user-password"]}
 
-print(Fore.GREEN + "🚀 > Connecting to Mastodon/Pixelfed.."')
-print(Style.RESET_ALL)
-print(datetime.datetime.now())
+print_log("🚀 > Connecting to Mastodon/Pixelfed..", color="green")
 mastodon = Mastodon(access_token=mastodon_token, api_base_url=mastodon_instance)
+
 while True:
     get_new_posts(
         mastodon,

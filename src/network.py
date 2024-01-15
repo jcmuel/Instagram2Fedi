@@ -12,7 +12,7 @@ from instaloader import Profile, Instaloader, LatestStamps
 def get_instagram_user(user, fetched_user):
     L = Instaloader()
 
-    print(Fore.GREEN + "TEST 🚀 > Connecting to Instagram...")
+    print(Fore.GREEN + "🚀 > Connecting to Instagram...")
     print(Style.RESET_ALL)
     print(datetime.datetime.now())
 

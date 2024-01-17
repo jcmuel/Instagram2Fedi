@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Functions to interact with Instagram and Mastodon."""
 
 import time
 
@@ -12,6 +13,8 @@ from util import print_log
 
 
 def get_instagram_user(user, fetched_user):
+    """Fetch the target Instagram account.
+    An authentication attempt is performed if some credentials were provided"""
     loader = Instaloader()
 
     print_log("🚀 > Connecting to Instagram...", color="green")
@@ -43,6 +46,8 @@ def get_instagram_user(user, fetched_user):
 
 
 def get_image(url):
+    """Download an image from Instagram."""
+
     try:
         print_log("🚀 > Downloading Image... " + url, color="yellow")
 
@@ -59,6 +64,8 @@ def get_image(url):
 
 
 def upload_image_to_mastodon(url, mastodon):
+    """Upload an Instagram image to Mastodon."""
+
     try:
         print_log("🐘 > Uploading Image...", color="yellow")
         media = mastodon.media_post(
@@ -76,6 +83,8 @@ def upload_image_to_mastodon(url, mastodon):
 
 
 def toot(urls, title, mastodon):
+    """Create toots from Instagram posts."""
+
     try:
         print_log("🐘 > Creating Toot..." + title, color="yellow")
         ids = []
@@ -95,7 +104,7 @@ def toot(urls, title, mastodon):
 
 def get_new_posts(
     mastodon,
-    mastodon_carousel_size,
+    _mastodon_carousel_size,  # TODO: remove or use it
     post_limit,
     already_posted_path,
     using_mastodon,
@@ -104,6 +113,8 @@ def get_new_posts(
     fetched_user,
     user,
 ):
+    """Fetch new Instagram posts and create toots."""
+
     # fetching user profile to get new posts
     profile = get_instagram_user(user, fetched_user)
     # get list of all posts

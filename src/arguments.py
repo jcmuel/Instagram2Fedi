@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Functions to process the arguments and the environment variables."""
+
 import os
 
 from util import print_log
@@ -17,15 +19,15 @@ fetch_count = os.environ.get(
     "I2M_FETCH_COUNT"
 )  # how many instagram posts to fetch per check_interval
 if os.environ.get("I2M_SCHEDULED") == "True":
-    scheduled_run = True  # run continuously (if False) or a single time (if True)
+    SCHEDULED_RUN = True  # run continuously (if False) or a single time (if True)
 else:
-    scheduled_run = False
+    SCHEDULED_RUN = False
 if os.environ.get("I2M_VERBOSE") == "True":  # verbose output
-    verbose_output = True
+    VERBOSE_OUTPUT = True
 else:
-    verbose_output = False
+    VERBOSE_OUTPUT = False
 
-if verbose_output:
+if VERBOSE_OUTPUT:
     print_log("instagram", instagram_user)
     print_log("instagram", instance)
     print_log(token)
@@ -35,11 +37,12 @@ if verbose_output:
     print_log(fetch_count)
     print_log(user_name)
     print_log(user_password)
-    print_log(scheduled_run)
-    print_log(verbose_output)
+    print_log(SCHEDULED_RUN)
+    print_log(VERBOSE_OUTPUT)
 
 
 def flags(args, defaults):
+    """Process the flags and update the setting dictionary."""
     count = 1
     while len(args) > count:
         if args[count] == "--instance":
@@ -82,10 +85,12 @@ def flags(args, defaults):
 
 
 def check_defaults(arg):
+    """Verify an argument is neither null nor empty."""
     return arg if arg != "" and arg else None
 
 
 def process_arguments(args, defaults):
+    """Process the arguments and update the setting dictionary."""
     defaults["instance"] = instance if instance != "" and instance else None
     defaults["instagram-user"] = (
         instagram_user if instagram_user != "" and instagram_user else None
@@ -106,9 +111,11 @@ def process_arguments(args, defaults):
     defaults["carousel-limit"] = (
         int(use_mastodon) if use_mastodon != "" and use_mastodon else None
     )
-    defaults["scheduled"] = bool(scheduled_run) if scheduled_run else False
-    defaults["verbose"] = bool(verbose_output) if verbose_output else False
+    defaults["scheduled"] = bool(SCHEDULED_RUN) if SCHEDULED_RUN else False
+    defaults["verbose"] = bool(VERBOSE_OUTPUT) if VERBOSE_OUTPUT else False
 
-    # Command line arguments more prioritized, if smth has been written in .env and in cmd args, then Instagram2Fedi will take values from `cmd args`
+    # Command line arguments more prioritized,
+    # if smth has been written in .env and in cmd args,
+    # then Instagram2Fedi will take values from `cmd args`
     new_defaults = flags(args, defaults)
     return new_defaults

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Script to crosspost from Instagram to Mastodon/Pixelfed"""
 
 import os
 import sys
@@ -33,14 +34,14 @@ if verbose:
 
 agree = [1, True, "true", "True", "yes", "Yes"]
 if os.environ.get("USE_DOCKER"):
-    id_filename = "/app/already_posted.txt"
+    ID_FILENAME = "/app/already_posted.txt"
 elif os.environ.get("USE_KUBERNETES"):
-    id_filename = "/data/already_posted.txt"
+    ID_FILENAME = "/data/already_posted.txt"
 else:
-    id_filename = "./already_posted.txt"
+    ID_FILENAME = "./already_posted.txt"
 
 
-with open(id_filename, "a", encoding="utf-8") as f:
+with open(ID_FILENAME, "a", encoding="utf-8") as f:
     f.write("\n")
 
 fetched_user = settings["instagram-user"]
@@ -66,7 +67,7 @@ while True:
         mastodon,
         mastodon_carousel_size,
         post_limit,
-        id_filename,
+        ID_FILENAME,
         using_mastodon,
         mastodon_carousel_size,
         post_interval,

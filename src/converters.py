@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+"""Functions to handle videos and caroussel"""
 
 from util import print_log
 
 
 def split_array(arr, size):
+    """Split an array into sub-arrays of specific size."""
+
     count = len(arr) // size + 1
     new_arr = []
     for i in range(count):
@@ -12,6 +15,8 @@ def split_array(arr, size):
 
 
 def try_to_get_carousel(array, post):
+    """Extract videos or caroussel from an Instagram post."""
+
     try:
         node = vars(post)["_node"]
         if "edge_sidecar_to_children" in node:

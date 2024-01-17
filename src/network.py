@@ -4,6 +4,7 @@ import time
 
 import requests
 from instaloader import Instaloader, Profile
+from instaloader.exceptions import QueryReturnedBadRequestException
 
 from already_posted import already_posted, mark_as_posted
 from converters import split_array, try_to_get_carousel
@@ -20,7 +21,15 @@ def get_instagram_user(user, fetched_user):
         session_file = user["name"] + "_session.sqlite"
         try:
             loader.load_session_from_file(user["name"], session_file)
-            assert user["name"] == loader.test_login()
+            try:
+                assert user["name"] == loader.test_login()
+            except QueryReturnedBadRequestException:
+                print_log(
+                    "Instagram requires a human verification... connect via a browser to solve a captcha.",
+                    color="red",
+                )
+                input("Press ENTER once the captcha is solved.")
+                assert user["name"] == loader.test_login()
             print_log("Restored the session")
         except FileNotFoundError:
             print_log(
@@ -36,7 +45,7 @@ def get_image(url):
     try:
         print_log("🚀 > Downloading Image... " + url, color="yellow")
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=60)
         response.raw.decode_content = True
 
         print_log("✨ > Downloaded!", color="green")
@@ -101,7 +110,7 @@ def get_new_posts(
         if stupidcounter < post_limit:
             stupidcounter += 1
             if already_posted(str(post.mediaid), already_posted_path):
-                print_log("🐘 > Already Posted        "+ post.url, color="yellow")
+                print_log("🐘 > Already Posted            "+ post.url, color="yellow")
                 break  # Do not need to go back further in time
             print_log("Posting... " + post.url)
             if using_mastodon:

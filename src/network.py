@@ -25,7 +25,8 @@ def get_instagram_user(user, fetched_user):
                 assert user["name"] == loader.test_login()
             except QueryReturnedBadRequestException:
                 print_log(
-                    "Instagram requires a human verification... connect via a browser to solve a captcha.",
+                    "Instagram requires a human verification... "
+                    + "connect via a browser to solve a captcha.",
                     color="red",
                 )
                 input("Press ENTER once the captcha is solved.")
@@ -51,9 +52,10 @@ def get_image(url):
         print_log("✨ > Downloaded!", color="green")
 
         return response.content
-    except Exception as err:
-        print_log("💥 > Failed to download image.", color="red")
+    except requests.exceptions.RequestException as err:
+        print_log("💥 > Failed to download image:  "  +url, color="red")
         print_log(err)
+        raise
 
 
 def upload_image_to_mastodon(url, mastodon):
@@ -64,9 +66,13 @@ def upload_image_to_mastodon(url, mastodon):
         )  # sending image to mastodon
         print_log("✨ > Uploaded!", color="green")
         return media["id"]
-    except Exception as err:
-        print_log("💥 > failed to upload image to mastodon", color="red")
+    except mastodon.MastodonError as err:
+        print_log("💥 > Failed to upload image to Mastodon", color="red")
         print_log(err)
+        raise
+    except requests.exceptions.RequestException as _err:
+        print_log("💥 > Image not downloaded... cancel the post.", color="red")
+        raise
 
 
 def toot(urls, title, mastodon):
@@ -83,9 +89,8 @@ def toot(urls, title, mastodon):
             print_log("Post identifiers:" + str(ids))
             mastodon.status_post(post_text, media_ids=ids)
 
-    except Exception as err:
+    except (mastodon.MastodonError, requests.exceptions.RequestException):
         print_log("😿 > Failed to create toot", color="red")
-        print_log(err)
 
 
 def get_new_posts(
@@ -110,7 +115,7 @@ def get_new_posts(
         if stupidcounter < post_limit:
             stupidcounter += 1
             if already_posted(str(post.mediaid), already_posted_path):
-                print_log("🐘 > Already Posted            "+ post.url, color="yellow")
+                print_log("🐘 > Already Posted " + post.url, color="yellow")
                 break  # Do not need to go back further in time
             print_log("Posting... " + post.url)
             if using_mastodon:

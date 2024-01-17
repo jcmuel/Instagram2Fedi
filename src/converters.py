@@ -24,7 +24,7 @@ def try_to_get_carousel(array, post):
                 )
                 print_log("🎠 > Found carousel!", color="green")
                 return urls
-            except Exception as err:
+            except KeyError as err:
                 print_log("🎠💥 > No carousel ", color="red")
                 print_log(err)
                 return array
@@ -37,14 +37,14 @@ def try_to_get_carousel(array, post):
                 urls = [node["video_url"]]
                 print_log("🎞 > Found video!", color="green")
                 return urls
-            except Exception as err:
+            except KeyError as err:
                 print_log("🎞💥 > No video :(", color="red")
                 print_log(err)
                 return array
         else:
             print_log("🎠💥 > No video", color="yellow")
 
-    except Exception as err:
+    except KeyError as err:
         print_log("😱💥 > No node :(", color="red")
         print_log(err)
         return array

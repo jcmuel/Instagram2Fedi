@@ -40,7 +40,7 @@ else:
     id_filename = "./already_posted.txt"
 
 
-with open(id_filename, "a") as f:
+with open(id_filename, "a", encoding="utf-8") as f:
     f.write("\n")
 
 fetched_user = settings["instagram-user"]

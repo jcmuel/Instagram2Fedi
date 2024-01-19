@@ -5,7 +5,7 @@ import time
 
 import requests
 from instaloader import Instaloader, Profile
-from instaloader.exceptions import QueryReturnedBadRequestException
+from instaloader.exceptions import QueryReturnedBadRequestException, ConnectionException
 
 from already_posted import already_posted, mark_as_posted
 from converters import split_array, try_to_get_carousel
@@ -34,10 +34,16 @@ def get_instagram_user(user, fetched_user):
                 )
                 input("Press ENTER once the captcha is solved.")
                 assert user["name"] == loader.test_login()
+            except ConnectionException:
+                print_log(
+                    "Invalid session (probably flagged as bot by Instagram)...",
+                    color="red",
+                )
+                raise
             print_log("Restored the session")
-        except FileNotFoundError:
+        except (FileNotFoundError, ConnectionException):
             print_log(
-                "Found no active session... authentication attempt", color="yellow"
+                "Found no valid session... authentication attempt", color="yellow"
             )
             loader.login(user["name"], user["password"])
             print_log("Authentication successful", color="green")

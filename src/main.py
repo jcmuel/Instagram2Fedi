@@ -60,11 +60,11 @@ scheduled = settings["scheduled"]
 user = {"name": settings["user-name"], "password": settings["user-password"]}
 
 print_log("🚀 > Connecting to Mastodon/Pixelfed..", color="green")
-mastodon = Mastodon(access_token=mastodon_token, api_base_url=mastodon_instance)
+mastodon_client = Mastodon(access_token=mastodon_token, api_base_url=mastodon_instance)
 
 while True:
     get_new_posts(
-        mastodon,
+        mastodon_client,
         mastodon_carousel_size,
         post_limit,
         ID_FILENAME,

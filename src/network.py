@@ -6,6 +6,7 @@ import time
 import requests
 from instaloader import Instaloader, Profile
 from instaloader.exceptions import QueryReturnedBadRequestException, ConnectionException
+from mastodon import MastodonError
 
 from already_posted import already_posted, mark_as_posted
 from converters import split_array, try_to_get_carousel
@@ -69,17 +70,17 @@ def get_image(url):
         raise
 
 
-def upload_image_to_mastodon(url, mastodon):
+def upload_image_to_mastodon(url, mastodon_client):
     """Upload an Instagram image to Mastodon."""
 
     try:
         print_log("🐘 > Uploading Image...", color="yellow")
-        media = mastodon.media_post(
+        media = mastodon_client.media_post(
             media_file=get_image(url), mime_type="image/jpeg"
         )  # sending image to mastodon
         print_log("✨ > Uploaded!", color="green")
         return media["id"]
-    except mastodon.MastodonError as err:
+    except MastodonError as err:
         print_log("💥 > Failed to upload image to Mastodon", color="red")
         print_log(err)
         raise
@@ -88,28 +89,28 @@ def upload_image_to_mastodon(url, mastodon):
         raise
 
 
-def toot(urls, title, mastodon):
+def toot(urls, title, mastodon_client):
     """Create toots from Instagram posts."""
 
     try:
         print_log("🐘 > Creating Toot..." + title, color="yellow")
         ids = []
         for url in urls:
-            ids.append(upload_image_to_mastodon(url, mastodon))
+            ids.append(upload_image_to_mastodon(url, mastodon_client))
         post_text = str(title) + " #bot #crosspost" + "\n"  # creating post text
         post_text = post_text.replace("@", "[at]")
         post_text = post_text[0:1000]
 
         if ids:
             print_log("Post identifiers:" + str(ids))
-            mastodon.status_post(post_text, media_ids=ids)
+            mastodon_client.status_post(post_text, media_ids=ids)
 
-    except (mastodon.MastodonError, requests.exceptions.RequestException):
+    except (MastodonError, requests.exceptions.RequestException):
         print_log("😿 > Failed to create toot", color="red")
 
 
 def get_new_posts(
-    mastodon,
+    mastodon_client,
     _mastodon_carousel_size,  # TODO: remove or use it
     post_limit,
     already_posted_path,
@@ -138,9 +139,9 @@ def get_new_posts(
             if using_mastodon:
                 urls_arr = split_array(url_arr, carousel_size)
                 for urls in urls_arr:
-                    toot(urls, post.caption, mastodon)
+                    toot(urls, post.caption, mastodon_client)
             else:
-                toot(url_arr, post.caption, mastodon)
+                toot(url_arr, post.caption, mastodon_client)
             mark_as_posted(str(post.mediaid), already_posted_path)
             time.sleep(post_interval)
         else:

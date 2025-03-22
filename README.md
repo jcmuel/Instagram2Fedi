@@ -1,8 +1,10 @@
-_Guys... Instagram is sh*t. Even [bibliogram](https://www.reddit.com/r/privacy/comments/wrczxc/bibliogram_is_being_discontinued/) is being discontinued. If you're able to migrate you proile to any fediverse instance or contact to person, whose instagram you'd like to crosspost and ask him to post to fediverse to, it wil be the best desicion_
+_Guys... Instagram is sh*t. Even [bibliogram](https://www.reddit.com/r/privacy/comments/wrczxc/bibliogram_is_being_discontinued/) 
+is being discontinued. If you're able to migrate you profile to any fediverse instance or contact to person, whose 
+instagram you'd like to cross-post and ask him to post to fediverse to, it wil be the best decision_
 
 # Instagram2Fedi <span><img width="50px" src="https://upload.wikimedia.org/wikipedia/commons/9/93/Fediverse_logo_proposal.svg"></span>
 
-Simple tool for crossposting posts from instagram to Mastodon/Pixelfed.
+Simple tool for cross-posting posts from instagram to Mastodon/Pixelfed.
 
 ## Using without docker
 See [Docs.md](./Docs.md)
@@ -21,8 +23,8 @@ services:
     environment:
       - YOUR_CONTAINER_NAME=<whatever>
       - I2M_INSTAGRAM_USER=<instgram username>
-      - I2M_INSTANCE=<mastodon or pixelfed instance>
-      - I2M_TOKEN=<your token here>
+      - I2M_INSTANCE=<mastodon or pixelfed instance> # Not needed, if instance is stored in user_credentials.secret
+      - I2M_TOKEN=<your token here> # SECRET MASTODON TOKEN filename. See: src/create_credentials.py
       - I2M_CHECK_INTERVAL=3600 #1 hour    
       - I2M_POST_INTERVAL=3600 #1 hour   
       - I2M_USE_MASTODON=4 #max carouse    - is 4, if there's no limit set to -1
@@ -31,7 +33,11 @@ services:
       - I2M_USER_PASSWORD=admin # Your instagram password
 ```
 
-** Note: ** _Since somewhen it's seems not possible to fetch any data from instagram anonymously (maybe i'm wrong and there's a solution, I'll be very happy to know about it). Due that you unfortunately have to had an instagram accound and provide login and password to this script_
+> ** Note: ** _Since some time it seems to be not possible to fetch any data from Instagram anonymously (maybe I'm wrong 
+and there's a solution, I'll be very happy to know about it). Due to that you unfortunately need an Instagram account 
+and provide login and password to this script_
+
+> ** Note: ** _Instagram may block login attempts from this script, and may suspend your account._
 
 2. And edit environment variables
 
@@ -52,6 +58,3 @@ source ./run.sh
 
 
 ![screenshot](./img.png)
-
-
-

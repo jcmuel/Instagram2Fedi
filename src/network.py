@@ -17,7 +17,6 @@ def get_instagram_user(user, fetched_user):
     """Fetch the target Instagram account.
     An authentication attempt is performed if some credentials were provided"""
     loader = Instaloader()
-
     print_log("🚀 > Connecting to Instagram...", color="green")
 
     if user["name"] is not None:
@@ -49,6 +48,7 @@ def get_instagram_user(user, fetched_user):
             loader.login(user["name"], user["password"])
             print_log("Authentication successful", color="green")
             loader.save_session_to_file(session_file)
+
     return Profile.from_username(loader.context, fetched_user)
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Script to crosspost from Instagram to Mastodon/Pixelfed"""
+"""Script to cross-post from Instagram to Mastodon/Pixelfed"""
 
 import os
 import sys
@@ -14,9 +14,9 @@ from util import print_log
 default_settings = {
     "instance": None,
     "instagram-user": None,
-    "user-name": "",
+    "user-name": None,
     "user-password": None,
-    "token": None,
+    "token": "user_credentials.secret",
     "check-interval": 3600,
     "post-interval": 60,
     "fetch-count": 10,
@@ -30,7 +30,7 @@ settings = process_arguments(sys.argv, default_settings)
 verbose = settings["verbose"]
 
 if verbose:
-    print_log("SETTINGS", settings)
+    print_log(f"SETTINGS {settings}")
 
 agree = [1, True, "true", "True", "yes", "Yes"]
 if os.environ.get("USE_DOCKER"):
@@ -39,7 +39,6 @@ elif os.environ.get("USE_KUBERNETES"):
     ID_FILENAME = "/data/already_posted.txt"
 else:
     ID_FILENAME = "./already_posted.txt"
-
 
 with open(ID_FILENAME, "a", encoding="utf-8") as f:
     f.write("\n")
@@ -55,7 +54,6 @@ post_interval = settings["post-interval"]  # 1m
 using_mastodon = settings["carousel-limit"] > 0
 mastodon_carousel_size = settings["carousel-limit"]
 scheduled = settings["scheduled"]
-
 
 user = {"name": settings["user-name"], "password": settings["user-password"]}
 

@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.13
 
 
 COPY . /app
@@ -17,7 +17,6 @@ ENV I2M_CHECK_INTERVAL "$I2M_CHECK_INTERVAL"
 ENV I2M_POST_INTERVAL "$I2M_POST_INTERVAL"
 ENV I2M_USE_MASTODON "$I2M_USE_MASTODON"
 ENV I2M_FETCH_COUNT "$I2M_FETCH_COUNT"
-
 
 
 #ENTRYPOINT ["python", "/app/src/main.py", "--instagram-user", I2M_INSTAGRAM_USER, "--instance",  I2M_INSTANCE, "--token", I2M_TOKEN, "--check-interval", I2M_CHECK_INTERVAL, "--post-interval", I2M_POST_INTERVAL, "--fetch-count", I2M_FETCH_COUNT,  "--use-mastodon", I2M_USE_MASTODON]

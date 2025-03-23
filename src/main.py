@@ -45,7 +45,7 @@ with open(ID_FILENAME, "a", encoding="utf-8") as f:
 
 fetched_user = settings["instagram-user"]
 mastodon_instance = settings["instance"]
-mastodon_token = settings["token"]
+mastodon_token = os.path.abspath(settings["token"])
 
 post_limit = settings["fetch-count"]
 time_interval_sec = settings["check-interval"]  # 1d
@@ -58,6 +58,11 @@ scheduled = settings["scheduled"]
 user = {"name": settings["user-name"], "password": settings["user-password"]}
 
 print_log("🚀 > Connecting to Mastodon/Pixelfed..", color="green")
+
+if not os.path.isfile(mastodon_token):
+    print_log(f'Could not find Mastodon token file: {mastodon_token}', color='red')
+    sys.exit(1)
+
 mastodon_client = Mastodon(access_token=mastodon_token, api_base_url=mastodon_instance)
 
 while True:
@@ -74,4 +79,5 @@ while True:
     )
     if scheduled:
         break
+    print_log(f"⏳ > Sleeping for {time_interval_sec/3600.0:.1f} hours...", color="green")
     time.sleep(time_interval_sec)

@@ -22,6 +22,8 @@ services:
     image: "horhik/instagram2fedi:latest"
     volumes:
       - $HOME/.config/instaloader:/root/.config/instaloader
+      - ./user_credentials.secret:/app/user_credentials.secret
+      - ./already_posted.txt:/app/already_posted.txt
     environment:
       - YOUR_CONTAINER_NAME= #<whatever>
       - I2M_INSTAGRAM_USER= #<instagram username to be fetched>

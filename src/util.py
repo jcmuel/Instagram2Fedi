@@ -14,5 +14,5 @@ def print_log(message, color="white"):
     if color not in color_dict:
         raise ValueError("Unknown log color: " + color)
     print(
-        f"[{datetime.datetime.now()}] " + color_dict[color] + message + Style.RESET_ALL
+        f"[{datetime.datetime.now()}] {color_dict[color]}{message}{Style.RESET_ALL}"
     )

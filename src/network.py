@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Functions to interact with Instagram and Mastodon."""
-
 import time
+from pathlib import Path
 
 import requests
 from instaloader import Instaloader, Profile
@@ -21,7 +21,8 @@ def get_instagram_user(user, fetched_user):
 
     if user["name"] is not None:
         print_log("User " + user["name"])
-        session_file = user["name"] + "_session.sqlite"
+        session_file = str(Path.home().joinpath('.config', 'instaloader', f'session-{user["name"]}'))
+
         try:
             loader.load_session_from_file(user["name"], session_file)
             try:
@@ -126,12 +127,13 @@ def get_new_posts(
     profile = get_instagram_user(user, fetched_user)
     # get list of all posts
     posts = profile.get_posts()
-    stupidcounter = 0
+    stupid_counter = 0
+
     for post in posts:
         url_arr = try_to_get_carousel([post.url], post)
         # checking only `post_limit` last posts
-        if stupidcounter < post_limit:
-            stupidcounter += 1
+        if stupid_counter < post_limit:
+            stupid_counter += 1
             if already_posted(str(post.mediaid), already_posted_path):
                 print_log("🐘 > Already Posted " + post.url, color="yellow")
                 break  # Do not need to go back further in time
@@ -146,4 +148,5 @@ def get_new_posts(
             time.sleep(post_interval)
         else:
             break
+
     print_log("✨ > Fetched All", color="green")

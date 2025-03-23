@@ -20,24 +20,29 @@ services:
     build:
       context: .
     image: "horhik/instagram2fedi:latest"
+    volumes:
+      - $HOME/.config/instaloader:/root/.config/instaloader
     environment:
-      - YOUR_CONTAINER_NAME=<whatever>
-      - I2M_INSTAGRAM_USER=<instgram username>
-      - I2M_INSTANCE=<mastodon or pixelfed instance> # Not needed, if instance is stored in user_credentials.secret
-      - I2M_TOKEN=<your token here> # SECRET MASTODON TOKEN filename. See: src/create_credentials.py
-      - I2M_CHECK_INTERVAL=3600 #1 hour    
-      - I2M_POST_INTERVAL=3600 #1 hour   
+      - YOUR_CONTAINER_NAME= #<whatever>
+      - I2M_INSTAGRAM_USER= #<instagram username to be fetched>
+      - I2M_INSTANCE= #<Mastodon or Pixelfed instance> Not needed, if instance is stored in user_credentials.secret
+      - I2M_TOKEN=<your token filename here> #<SECRET MASTODON TOKEN filename> See: src/create_credentials.py
+      - I2M_CHECK_INTERVAL=3600 #1 hour
+      - I2M_POST_INTERVAL=3600 #1 hour
       - I2M_USE_MASTODON=4 #max carouse    - is 4, if there's no limit set to -1
-      - I2M_FETCH_COUNT=5 # how many instagram posts to fetch per check_interval   -
-      - I2M_USER_NAME=admin # Your instagram login name
-      - I2M_USER_PASSWORD=admin # Your instagram password
+      - I2M_FETCH_COUNT=5 # how many instagram posts to fetch per check_interval
+      - I2M_USER_NAME= #<Your instagram login name>
+      - I2M_USER_PASSWORD= #<Your instagram password> Not needed if ~/.config/instaloader/session-${I2M_USER_NAME} exists.
 ```
 
 > ** Note: ** _Since some time it seems to be not possible to fetch any data from Instagram anonymously (maybe I'm wrong 
 and there's a solution, I'll be very happy to know about it). Due to that you unfortunately need an Instagram account 
 and provide login and password to this script_
 
-> ** Note: ** _Instagram may block login attempts from this script, and may suspend your account._
+> ** Note: ** _Instagram may block login attempts from this script when using username and password, 
+and may also suspend the account. Instead of using username and password from within the script, use your
+browser to log into Instagram, e.g. Firefox, then extract the session information from the browser using the command
+`instaloader --load-cookies=firefox`. You can leave the password I2M_USER_PASSWORD blank.
 
 2. And edit environment variables
 

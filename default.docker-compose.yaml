@@ -5,14 +5,13 @@ services:
       context: .
     #image: "horhik/instagram2fedi:latest"
     volumes:
-      - $HOME/.config/instaloader:/root/.config/instaloader
-      - ./user_credentials.secret:/app/user_credentials.secret
-      - ./already_posted.txt:/app/already_posted.txt
+      - ${HOME}/.config/instaloader:/root/.config/instaloader
+      - ./config:/app/config
     environment:
       - YOUR_CONTAINER_NAME=instagram2fedi
       - I2M_INSTAGRAM_USER= #<instagram username to be fetched>
-      - I2M_INSTANCE= #<Mastodon or Pixelfed instance> Not needed, if instance is stored in user_credentials.secret
-      - I2M_TOKEN=user_credentials.secret #<SECRET MASTODON TOKEN filename>. See: src/create_credentials.py
+      - I2M_INSTANCE= #<Mastodon or Pixelfed instance> Leave blank if you use src/create_credentials.py.
+      - I2M_TOKEN= #<SECRET MASTODON TOKEN filename> Leave blank if you use src/create_credentials.py.
       - I2M_CHECK_INTERVAL=3600 #1 hour
       - I2M_POST_INTERVAL=3600 #1 hour
       - I2M_USE_MASTODON=4 #max carouse    - is 4, if there's no limit set to -1

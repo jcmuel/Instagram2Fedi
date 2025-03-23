@@ -1,12 +1,10 @@
 .idea/
 *~
-already_posted.txt
+config/
 src/__pycache__/
 .venv
 .venv/
 .env.sh
 docker-compose.yml
 docker-compose.yaml
-*.sqlite
-*.secret
 manual.xsh

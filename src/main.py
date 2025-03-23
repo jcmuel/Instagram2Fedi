@@ -8,6 +8,7 @@ import time
 from mastodon import Mastodon
 
 from arguments import process_arguments
+from create_credentials import CONFIG_DIR, USER_CREDENTIALS
 from network import get_new_posts
 from util import print_log
 
@@ -16,7 +17,7 @@ default_settings = {
     "instagram-user": None,
     "user-name": None,
     "user-password": None,
-    "token": "user_credentials.secret",
+    "token": USER_CREDENTIALS,
     "check-interval": 3600,
     "post-interval": 60,
     "fetch-count": 10,
@@ -32,13 +33,11 @@ verbose = settings["verbose"]
 if verbose:
     print_log(f"SETTINGS {settings}")
 
-agree = [1, True, "true", "True", "yes", "Yes"]
-if os.environ.get("USE_DOCKER"):
-    ID_FILENAME = "/app/already_posted.txt"
-elif os.environ.get("USE_KUBERNETES"):
+if os.environ.get("USE_KUBERNETES"):
     ID_FILENAME = "/data/already_posted.txt"
 else:
-    ID_FILENAME = "./already_posted.txt"
+    os.makedirs(CONFIG_DIR, exist_ok=True)
+    ID_FILENAME = os.path.join(CONFIG_DIR, "already_posted.txt")
 
 with open(ID_FILENAME, "a", encoding="utf-8") as f:
     f.write("\n")
@@ -48,8 +47,8 @@ mastodon_instance = settings["instance"]
 mastodon_token = os.path.abspath(settings["token"])
 
 post_limit = settings["fetch-count"]
-time_interval_sec = settings["check-interval"]  # 1d
-post_interval = settings["post-interval"]  # 1m
+time_interval_sec = settings["check-interval"]
+post_interval = settings["post-interval"]
 
 using_mastodon = settings["carousel-limit"] > 0
 mastodon_carousel_size = settings["carousel-limit"]
